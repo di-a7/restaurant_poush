@@ -17,7 +17,7 @@ class FoodAdmin(admin.ModelAdmin):
 
 @admin.register(Table)
 class TableAdmin(admin.ModelAdmin):
-   list_display = ['number']
+   list_display = ['number','is_occupied']
 
 class OrderItemInline(admin.TabularInline):
    model = OrderItem
