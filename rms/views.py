@@ -8,7 +8,12 @@ from rest_framework.serializers import ValidationError
 from rest_framework.views import APIView
 from rest_framework import viewsets
 from rest_framework.pagination import PageNumberPagination
+from rest_framework import filters
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
+from .permissions import IsAuthenticatedOrReadOnly
 from rest_framework.generics import GenericAPIView,ListCreateAPIView,RetrieveAPIView,DestroyAPIView,UpdateAPIView, RetrieveUpdateDestroyAPIView
+from django_filters import rest_framework as filter
+from .filters import FoodFilter
 # Create your views here.
 
 class CategoryViewset(viewsets.ModelViewSet):
@@ -31,3 +36,8 @@ class FoodViewset(viewsets.ModelViewSet):
    queryset = Food.objects.select_related('category').all()
    serializer_class = FoodSerializer
    pagination_class = PageNumberPagination
+   filter_backends = [filters.SearchFilter,filter.DjangoFilterBackend]
+   filterset_class = FoodFilter
+   search_fields = ['id','name']
+   permission_classes = [IsAuthenticatedOrReadOnly]
+   
