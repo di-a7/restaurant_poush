@@ -14,13 +14,24 @@ from .permissions import IsAuthenticatedOrReadOnly
 from rest_framework.generics import GenericAPIView,ListCreateAPIView,RetrieveAPIView,DestroyAPIView,UpdateAPIView, RetrieveUpdateDestroyAPIView
 from django_filters import rest_framework as filter
 from .filters import FoodFilter
+from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiExample
+from drf_spectacular.types import OpenApiTypes
 # Create your views here.
 
 class CategoryViewset(viewsets.ModelViewSet):
    queryset = Category.objects.all()
    serializer_class = CategorySerializer
    
+   # @extend_schema(
+   #    parameters=[
+   #    OpenApiParameter(name='name', description='Filter by Name', required=False, type=str),
+   #    ],
+   #    # description='It deletes the category.',
+   # )
    def destroy(self, request, *args, **kwargs):
+      """
+      Can not delete the category listed in OrderItem
+      """
       category = self.get_object()
       order_item = OrderItem.objects.filter(food__category = category).count()
       if order_item > 0:
