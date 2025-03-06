@@ -11,7 +11,6 @@ from .serializer import LoginSerializer
 
 class LoginAPIView(APIView):
    # serializer_class = LoginSerializer
-   
    @extend_schema(
       request = LoginSerializer,
       responses={201: None},

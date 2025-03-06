@@ -93,7 +93,7 @@ DATABASES = {
     
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'rms_eve',
+        'NAME': 'poush',
         'USER': 'postgres',
         'PASSWORD': '123',
         'HOST': 'localhost',
@@ -166,3 +166,5 @@ SPECTACULAR_SETTINGS = {
     'SERVE_INCLUDE_SCHEMA': False,
     # OTHER SETTINGS
 }
+
+AUTH_USER_MODEL = 'core.User'
