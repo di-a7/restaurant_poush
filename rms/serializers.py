@@ -32,3 +32,33 @@ class FoodSerializer(serializers.ModelSerializer):
    
    def get_price_with_tax(self, food:Food):
       return food.price * 0.13 + food.price
+
+class OrderItemSerializer(serializers.ModelSerializer):
+   food_id = serializers.PrimaryKeyRelatedField(
+      queryset = Food.objects.all(),
+      source = 'food'
+   )
+   food = serializers.StringRelatedField()
+   class Meta:
+      model = OrderItem
+      fields = ("food_id","food",)
+
+class OrderSerializer(serializers.ModelSerializer):
+   user = serializers.HiddenField(default = serializers.CurrentUserDefault())
+   items = OrderItemSerializer(many=True)
+   status = serializers.CharField(read_only = True)
+   payment = serializers.CharField(read_only = True)
+   class Meta:
+      model = Order
+      fields= ("user","table","status","payment","items")
+   
+   def create(self, validated_data):
+      items_data = validated_data.pop('items')
+      order = Order.objects.create(**validated_data)
+      
+      for item in items_data:
+         OrderItem.objects.create(order = order, food = item['food'])
+      return order
+   
+   def update(self, instance, validated_data):
+      return super().update(instance, validated_data)

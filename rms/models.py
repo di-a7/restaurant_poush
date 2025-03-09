@@ -43,11 +43,11 @@ class Order(models.Model):
       UNPAID : "Pending"
    }
    user = models.ForeignKey(User, on_delete=models.CASCADE, null = True, blank = True)
-   table = models.ForeignKey(Table, on_delete=models.CASCADE)
+   table = models.ForeignKey(Table, on_delete=models.CASCADE, null=True, blank=True)
    status = models.CharField(max_length=2,choices=STATUS_CHOICES, default=PENDING)
    payment = models.CharField(max_length=1,choices=PAYMENT_CHOICES, default= UNPAID)
 
 
 class OrderItem(models.Model):
-   food = models.ForeignKey(Food,on_delete=models.PROTECT)
-   order = models.ForeignKey(Order,on_delete=models.PROTECT)
+   food = models.ForeignKey(Food,on_delete=models.PROTECT,related_name='items')
+   order = models.ForeignKey(Order,on_delete=models.PROTECT,related_name='items')

@@ -10,7 +10,7 @@ from rest_framework import viewsets
 from rest_framework.pagination import PageNumberPagination
 from rest_framework import filters
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
-from .permissions import IsAuthenticatedOrReadOnly
+from .permissions import IsAuthenticatedOrReadOnly,IsWaiterOrReadOnly
 from rest_framework.generics import GenericAPIView,ListCreateAPIView,RetrieveAPIView,DestroyAPIView,UpdateAPIView, RetrieveUpdateDestroyAPIView
 from django_filters import rest_framework as filter
 from .filters import FoodFilter
@@ -18,7 +18,7 @@ from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiExampl
 from drf_spectacular.types import OpenApiTypes
 # Create your views here.
 
-class CategoryViewset(viewsets.ModelViewSet):
+class CategoryViewset(viewsets.ReadOnlyModelViewSet):
    queryset = Category.objects.all()
    serializer_class = CategorySerializer
    
@@ -43,7 +43,7 @@ class CategoryViewset(viewsets.ModelViewSet):
          "details":"Category has be deleted."
       },status=status.HTTP_204_NO_CONTENT)
 
-class FoodViewset(viewsets.ModelViewSet):
+class FoodViewset(viewsets.ReadOnlyModelViewSet):
    queryset = Food.objects.select_related('category').all()
    serializer_class = FoodSerializer
    pagination_class = PageNumberPagination
@@ -51,4 +51,9 @@ class FoodViewset(viewsets.ModelViewSet):
    filterset_class = FoodFilter
    search_fields = ['id','name']
    permission_classes = [IsAuthenticatedOrReadOnly]
-   
+
+class OrderViewset(viewsets.ModelViewSet):
+   queryset = Order.objects.prefetch_related('items').all()
+   serializer_class = OrderSerializer
+   pagination_class = PageNumberPagination
+   permission_classes = [IsAuthenticated,IsWaiterOrReadOnly]
